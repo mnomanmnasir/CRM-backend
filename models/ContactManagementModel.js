@@ -6,7 +6,9 @@ const contactSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     phone: { type: String },
     company: { type: String },
-    interactions: [{ type: String }] // Aap yahan detailed objects bhi use kar sakte hain
+    interactions: [{ type: String }],// Aap yahan detailed objects bhi use kar sakte hain
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Product belongs to a user
+
   },
   { timestamps: true }
 );
