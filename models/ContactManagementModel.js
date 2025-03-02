@@ -7,7 +7,7 @@ const contactSchema = new mongoose.Schema(
     phone: { type: String },
     company: { type: String },
     interactions: [{ type: String }],// Aap yahan detailed objects bhi use kar sakte hain
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // Product belongs to a user
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // contact belongs to a user
 
   },
   { timestamps: true }

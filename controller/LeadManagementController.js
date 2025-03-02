@@ -1,4 +1,4 @@
-const Lead = require("../models/LeadManagementModel");
+// const Lead = require("../models/LeadManagementModel");
 
 // // Naya lead create karne ka function
 // exports.createLead = async (req, res) => {
@@ -127,14 +127,28 @@ const Lead = require("../models/LeadManagementModel");
 //   }
 // };
 
-// const Lead = require("../models/LeadModel");
+const Lead = require("../models/LeadManagementModel");
 
 // ✅ Create Lead API
 exports.createLead = async (req, res) => {
   try {
-    const lead = new Lead(req.body);
-    await lead.save();
-    res.status(201).json(lead);
+    const { name,
+      email,
+      status,
+      source,
+      notes,
+      assignedTo } = req.body;
+    const Leads = new Lead({
+      name,
+      email,
+      status,
+      source,
+      notes,
+      assignedTo,
+      userId: req.user.userId, // Associate lead with logged-in user
+    })
+    await Leads.save();
+    res.status(201).json(Leads);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -143,10 +157,7 @@ exports.createLead = async (req, res) => {
 // ✅ Get All Leads API
 exports.getLeads = async (req, res) => {
   try {
-    const leads = await Lead.find();
-    if (leads.length === 0) {
-      return res.status(404).json({ message: "No leads found" });
-    }
+    const leads = await Lead.find({ userId: req.user.userId });
     res.status(200).json(leads);
   } catch (err) {
     res.status(500).json({ error: err.message });

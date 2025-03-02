@@ -11,7 +11,8 @@ const leadSchema = new mongoose.Schema(
     },
     source: { type: String },
     notes: { type: String },
-    assignedTo: { type: String }
+    assignedTo: { type: String },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // lead belongs to a user
   },
   { timestamps: true }
 );

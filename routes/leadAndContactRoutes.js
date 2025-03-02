@@ -13,9 +13,9 @@ router.get("/contacts", authMiddleware, contactController.getContacts);
 
 // ----- Leads Routes -----
 // Naya lead create karne ka route
-router.post("/leads", leadController.createLead);
+router.post("/leads",authMiddleware, leadController.createLead);
 // Sare leads retrieve karne ka route
-router.get("/leads", leadController.getLeads);
+router.get("/leads",authMiddleware, leadController.getLeads);
 router.get("/leads/:id", leadController.getLeadById); // Get Single Lead
 router.put("/leads/:id", leadController.updateLead); // Update Lead
 router.delete("/leads/:id", leadController.deleteLead); // Delete Lead
