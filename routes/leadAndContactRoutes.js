@@ -10,6 +10,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
 router.post("/contacts", authMiddleware, contactController.createContact);
 // Sare contacts retrieve karne ka route
 router.get("/contacts", authMiddleware, contactController.getContacts);
+router.get("/contacts/:id", leadController.getLeadById); // Get Single contact
 
 // ----- Leads Routes -----
 // Naya lead create karne ka route

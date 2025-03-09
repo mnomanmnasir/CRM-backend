@@ -8,7 +8,7 @@ let otpStore = {}; // Temporary storage for OTPs
 // Register User
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     console.log("Registering user:", name, email); // Debugging ke liye
 
@@ -23,7 +23,7 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Save new user
-    const newUser = new User({ name, email, password: hashedPassword });
+    const newUser = new User({ name, email, password: hashedPassword, role });
     await newUser.save();
 
     res.status(201).json({ message: "User registered successfully" });
@@ -79,12 +79,13 @@ const loginUser = async (req, res) => {
     }
 
     // Generate token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    const token = jwt.sign({ userId: user._id, user }, process.env.JWT_SECRET, { expiresIn: "1d" });
+    // const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({
       message: "Login successful",  // ✅ Success message bhejna
       token,
-      user: { _id: user._id, name: user.name, email: user.email }
+      user: { _id: user._id, name: user.name, email: user.email, role: user.role }
     });
     // res.status(200).json({ token, user: { _id: user._id, name: user.name, email: user.email } });
   } catch (error) {
@@ -177,4 +178,21 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUser, forgotPassword, verifyOTP, resetPassword };
+// Assign permissions to a user (Admin only)
+const assignPermissions = async (req, res) => {
+  try {
+    const { userId, permissions } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.permissions = permissions;
+    await user.save();
+
+    res.json({ message: "Permissions updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUser, forgotPassword, verifyOTP, assignPermissions, resetPassword };

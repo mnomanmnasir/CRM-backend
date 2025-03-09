@@ -33,6 +33,39 @@ exports.getContacts = async (req, res) => {
   }
 };
 
+// ✅ Update a contact by ID
+exports.editContact = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, company, interactions } = req.body;
+    const updatedContact = await Contact.findOneAndUpdate(
+      { _id: id, userId: req.user.userId },
+      { name, email, phone, company, interactions },
+      { new: true } // Return the updated document
+    );
+    if (!updatedContact) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+    res.status(200).json({ message: "Contact Updated", contact: updatedContact });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ Delete a contact by ID
+exports.deleteContact = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedContact = await Contact.findOneAndDelete({ _id: id, userId: req.user.userId });
+    if (!deletedContact) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+    res.status(200).json({ message: "Contact Deleted", contact: deletedContact });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // const Product = require("../models/Product");
 
 // ✅ Add Product (Only Logged-in User Can Add)
